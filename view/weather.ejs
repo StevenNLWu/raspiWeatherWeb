@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Raspberrypi Weather Station</title>
+
+    <script src="/js/jquery.js"></script>
+    <script src="/js/d3.min.js"></script>    
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+
+
+    <link href="/css/weather.css" rel="stylesheet">
+
+  </head>
+  <body>
+      <script src="/js/config.js"></script>  
+    <script src="/js/weather.js"></script>
+    <div class="container-fluid">
+        <div id ="headerRow" class="row">
+        </div>
+        <div id="mainRow" class="row">
+          <!-- Create a div where the graph will take place -->
+          <div id="chartCol" class= "col-9">
+              <svg id="tempChart"></svg>
+              <svg id="humChart"></svg>
+              <svg id="prsChart"></svg>
+          </div>        
+          <div id="dashboardCol" class= "col-3">
+
+              <button id="1hrButton" type="button" class="btn btn-outline-primary" >1h</button>
+              <button id="12hrButton" type="button" class="btn btn-outline-primary">12h</button>             
+              <button id="1dButton" type="button" class="btn btn-outline-primary">1d</button>     
+              <button id="7dButton" type="button" class="btn btn-outline-primary">7d</button>     
+              <button id="1mButton" type="button" class="btn btn-outline-primary">1m</button>     
+              <button id="6mButton" type="button" class="btn btn-outline-primary">6m</button>     
+              <button id="1yButton" type="button" class="btn btn-outline-primary">1y</button>     
+          </div>  
+        </div>
+
+
+    </div>
+
+  </body>
+</html>
