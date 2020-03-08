@@ -115,14 +115,17 @@ class weatherPage{
         maxWidth = 1100,
         maxHeight = 300,
         width = maxWidth - margin.left - margin.right,
-        height = maxHeight - margin.top - margin.bottom;
+        height = maxHeight - margin.top - margin.bottom,
+        viewBoxSize = "0 0 " + maxWidth +" "+ maxHeight;
+        
     
         d3.select("#tempChart").select("g").remove(); 
     
         // set SVG attributes 
         let svg = d3.select("#tempChart")
-                    .attr("width", maxWidth)
-                    .attr("height", maxHeight)
+                    .attr("viewBox", viewBoxSize)            
+        //.attr("width", maxWidth)
+                    //.attr("height", maxHeight)
                     .append("g")
                     .attr("id","d3Group")
                     .attr("transform",
