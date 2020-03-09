@@ -1,3 +1,4 @@
+
 /****
  * 
  * 
@@ -127,6 +128,9 @@ class C_d3Graph{
     // label variable
     this.xLabel = "Datetime";
     this.yTempLabel = "Temperature (°C)";
+    this.dbTag2LineLab= [];
+    this.dbTag2LineLab.push({dbTag: "raspiWeatherStation01", lineLable: "office"});
+    this.dbTag2LineLab.push({dbTag: "raspiWeatherStation02", lineLable: "home"});
 
     // the temp graph SVG 
     this.tempGraphSvg = d3.select("#tempChart")
@@ -149,7 +153,13 @@ class C_d3Graph{
                     .attr("transform", "rotate(-90)")
                     .attr("x", 0 - this.height/2 + 50)  // 50 for text length
                     .attr("y", 0 - this.margin.left/2 - 10)  // 10 for fine tuning
-                    .text(this.yTempLabel)
+                    .text(this.yTempLabel);
+
+    // add the line label
+    this.tempGraphSvg.append("text")
+                     .attr("id", "tempLine1Lab")
+    this.tempGraphSvg.append("text")
+                     .attr("id", "tempLine2Lab")
 
      // the temp grash X axis
     this.tempGraphX = d3.scaleTime().range([ 0, this.width ]);
@@ -161,8 +171,6 @@ class C_d3Graph{
     this.tempGraphY = d3.scaleLinear().range([ this.height, 0 ]);
     this.tempGraphSvg.append("g")
                       .attr("id", "tempYDomain")
-
-                      
 
   } // end of constructor
 
@@ -183,11 +191,12 @@ class C_d3Graph{
     var tempYDomain = d3.select("#tempYDomain");       
     tempYDomain.call(d3.axisLeft(this.tempGraphY));
 
-    // Add the line
+    // add line No1
+    var line1Data = weatherData.filter(x => x.device == "raspiWeatherStation01");
     let x = this.tempGraphX;
     let y = this.tempGraphY;
     this.tempGraphSvg.append("path")
-                    .datum(weatherData)
+                    .datum(weatherData.filter(x => x.device == "raspiWeatherStation01"))
                     .attr("id", "tempLine")
                     .attr("fill", "none")
                     .attr("stroke", "steelblue")
@@ -196,6 +205,17 @@ class C_d3Graph{
                                   .x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.temp) })
                           );
+    // add Line No1 Label
+    var tempLine1Lab = d3.select("#tempLine1Lab")
+                      .attr("transform", "translate(" + (this.width+3) + "," + y(weatherData.filter(x => x.device == "raspiWeatherStation01")[0].temp) + ")")
+                      .attr("dy", ".35em")
+                      .attr("text-anchor", "start")
+                      .style("fill", "steelblue")
+                      .text(this.dbTag2LineLab.find(x => x.dbTag == "raspiWeatherStation01").lineLable);
+
+    // Add line No2
+    var line2Data = weatherData.filter(x => x.device == "raspiWeatherStation02");
+
 /*
  // Create the circle that travels along the curve of chart
  let focus = svg.append('g')
