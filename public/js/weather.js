@@ -112,7 +112,6 @@ class C_data{
  * 
  * 
  */
-
 class C_d3Graph{
 
   constructor(){
@@ -125,7 +124,7 @@ class C_d3Graph{
     this.height = this.maxHeight - this.margin.top - this.margin.bottom,
     this.viewBoxSize = "0 0 " + this.maxWidth +" "+ this.maxHeight;
    
-    // label for X axis
+    // label variable
     this.xLabel = "Datetime";
     this.yTempLabel = "Temperature (°C)";
 
@@ -150,30 +149,39 @@ class C_d3Graph{
                     .attr("transform", "rotate(-90)")
                     .attr("x", 0 - this.height/2 + 50)  // 50 for text length
                     .attr("y", 0 - this.margin.left/2 - 10)  // 10 for fine tuning
-                    .text(this.yTempLabel);
-
+                    .text(this.yTempLabel)
 
      // the temp grash X axis
-    this.tempGraphX = d3.scaleTime().range([ 0, this.width ]);;
+    this.tempGraphX = d3.scaleTime().range([ 0, this.width ]);
+    this.tempGraphSvg.append("g")
+                      .attr("id", "tempXDomain")
+
+
     // the temp grash Y axis
-    this.tempGraphY = d3.scaleTime().range([ this.height, 0 ]);;
+    this.tempGraphY = d3.scaleLinear().range([ this.height, 0 ]);
+    this.tempGraphSvg.append("g")
+                      .attr("id", "tempYDomain")
+
+                      
 
   } // end of constructor
 
   initGraph(weatherData){
-            
+          
     // init the X axis
-    this.tempGraphX.domain(d3.extent(weatherData, function(d) { return d.date; }))                 
-    this.tempGraphSvg.append("g")
-                      .attr("id", "tempXDomain")    
-                     .attr("transform", "translate(0," + this.height + ")")
-                     .call(d3.axisBottom(this.tempGraphX));
-
+    this.tempGraphX = d3.scaleTime()
+                        .domain(d3.extent(weatherData, function(d) { return d.date; }))        
+                        .range([ 0, this.width ]);      
+    var tempXDomain = d3.select("#tempXDomain");   
+    tempXDomain.attr("transform", "translate(0," + this.height + ")")
+                .call(d3.axisBottom(this.tempGraphX));
+                     
     // init the Y axis
-    this.tempGraphY.domain(d3.extent(weatherData, function(d) { return d.temp; }))             
-    this.tempGraphSvg.append("g")
-                      .attr("id", "tempYDomain")    
-                     .call(d3.axisLeft(this.tempGraphY));
+    this.tempGraphY = d3.scaleLinear()
+                        .domain(d3.extent(weatherData, function(d) { return d.temp; }))   
+                        .range([ this.height, 0 ]);   
+    var tempYDomain = d3.select("#tempYDomain");       
+    tempYDomain.call(d3.axisLeft(this.tempGraphY));
 
     // Add the line
     let x = this.tempGraphX;
@@ -290,10 +298,6 @@ class C_d3Graph{
                     .y(function(d) { return y(d.temp) })
             )
 
-
-
-
-
   } // end of function switchGraph
     
   updateData(weatherData){
@@ -325,8 +329,6 @@ class C_d3Graph{
 
 
 } // end of initGraph
-
-
 
 class C_button{
 
