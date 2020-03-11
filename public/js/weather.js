@@ -62,6 +62,7 @@ class C_data{
 
   callApi2SelectRawData(dtRange){
 
+    let url = config.getapiURL();
     let self = this;
 
     return $.get(config.getapiURL(),  // getapiURL() is a statis method in config.js
@@ -76,13 +77,13 @@ class C_data{
 
         console.log(new Date().toLocaleString()
                     + ": " 
-                    + "Fail; Get / " + this.pageUrl + "param={" + dtRange + "}; " 
+                    + "Fail; Get " + url + "param={" + dtRange + "}; " 
                     + rawData.message.toString() 
                     );
       }else{
         console.log(new Date().toLocaleString()
                     + ": " 
-                    + "Success; Get / " + this.pageUrl + "param={" + dtRange + "}." 
+                    + "Success; Get " + url + "param={" + dtRange + "}." 
                     );
         self._setData(dtRange, rawData);
       }
@@ -132,21 +133,19 @@ class C_d3Graph{
     this.dbTag2LineLab.push({dbTag: "raspiWeatherStation01", lineLable: "office"});
     this.dbTag2LineLab.push({dbTag: "raspiWeatherStation02", lineLable: "home"});
 
-    // the temp graph SVG 
+    // add the TEMP graph SVG 
     this.tempGraphSvg = d3.select("#tempChart")
                           .attr("viewBox", this.viewBoxSize)       
                           .append("g")
                           .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")                     
-  
-    // add X axis label
+    // add X axis label on TEMP
     this.tempGraphSvg.append("text")
                     .attr("class", "x label")
                     .attr("text-anchor", "end")
                     .attr("x", this.width/2)
                     .attr("y", this.height+this.margin.bottom - 5)   // -5 for the border
                     .text(this.xLabel);
-
-    // add Y axis label
+    // add Y axis label on TEMP
     this.tempGraphSvg.append("text")
                     .attr("class", "y label")
                     .attr("text-anchor", "end")    
@@ -154,29 +153,31 @@ class C_d3Graph{
                     .attr("x", 0 - this.height/2 + 50)  // 50 for text length
                     .attr("y", 0 - this.margin.left/2 - 10)  // 10 for fine tuning
                     .text(this.yTempLabel);
-
-    // add the line label
+    // add the line label on TEMP
     this.tempGraphSvg.append("text")
                      .attr("id", "tempLine1Lab")
     this.tempGraphSvg.append("text")
                      .attr("id", "tempLine2Lab")
-
-     // the temp grash X axis
+     // add the x-domain on TEMP
     this.tempGraphX = d3.scaleTime().range([ 0, this.width ]);
     this.tempGraphSvg.append("g")
                       .attr("id", "tempXDomain")
-
-
-    // the temp grash Y axis
+    // the the y-domain on TEMP
     this.tempGraphY = d3.scaleLinear().range([ this.height, 0 ]);
     this.tempGraphSvg.append("g")
                       .attr("id", "tempYDomain")
+    this.tempGraphSvg.append("g")
+                      .attr("id", "tempGrid")   
+                      .attr("class", "grid")
+                      
+
+      
 
   } // end of constructor
 
   initGraph(weatherData){
           
-    // init the X axis
+    // init the X axis unit, according to the data
     this.tempGraphX = d3.scaleTime()
                         .domain(d3.extent(weatherData, function(d) { return d.date; }))        
                         .range([ 0, this.width ]);      
@@ -184,15 +185,19 @@ class C_d3Graph{
     tempXDomain.attr("transform", "translate(0," + this.height + ")")
                 .call(d3.axisBottom(this.tempGraphX));
                      
-    // init the Y axis
+    // init the Y axis unit, according to the data
     this.tempGraphY = d3.scaleLinear()
                         .domain(d3.extent(weatherData, function(d) { return d.temp; }))   
                         .range([ this.height, 0 ]);   
     var tempYDomain = d3.select("#tempYDomain");       
     tempYDomain.call(d3.axisLeft(this.tempGraphY));
 
+    // init the grid
+    d3.select("#tempGrid").call(d3.axisLeft(this.tempGraphY)
+    .tickSize(-this.width)
+    .tickFormat(""));
+
     // add line No1
-    var line1Data = weatherData.filter(x => x.device == "raspiWeatherStation01");
     let x = this.tempGraphX;
     let y = this.tempGraphY;
     this.tempGraphSvg.append("path")
@@ -207,7 +212,9 @@ class C_d3Graph{
                           );
     // add Line No1 Label
     var tempLine1Lab = d3.select("#tempLine1Lab")
-                      .attr("transform", "translate(" + (this.width+3) + "," + y(weatherData.filter(x => x.device == "raspiWeatherStation01")[0].temp) + ")")
+                          .attr("transform", "translate(" + (this.width+3) 
+                                + "," + y(weatherData.filter(x => x.device == "raspiWeatherStation01")[weatherData.length-1].temp) + ")")
+    
                       .attr("dy", ".35em")
                       .attr("text-anchor", "start")
                       .style("fill", "steelblue")
@@ -413,8 +420,6 @@ class C_button{
 c_data = new C_data();
 if(! (dtRange = localStorage.getItem('dtRange')))
   dtRange = "1h";
-  c_data.callApi2SelectRawData(dtRange);
-
 
 (async () => {
   await c_data.callApi2SelectRawData(dtRange);
