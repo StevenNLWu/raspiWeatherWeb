@@ -1,9 +1,24 @@
 
+
 /****
  * 
+ *  class for device info
+ * 
+ */
+class C_device{
+
+  static getDeviceNo1Name() {
+    return "raspiWeatherStation01";
+  }
+
+  static getDeviceNo2Name() {
+    return "raspiWeatherStation02";
+  }
+}
+
+/****
  * 
  *  class for data, weather data from DB
- * 
  * 
  */
 class C_data{
@@ -15,6 +30,11 @@ class C_data{
 
   }
 
+  /**
+   * convert the raw data form DB to the web's preferred format
+   * @param {string} dtRange ={1h, 12h, 1d, 7d, 1m, 6m, 1y}
+   * @param {object} rawData The raw data from DB
+   */
   _setData(dtRange, rawData){
   
     this.dbSize = rawData.size;
@@ -60,6 +80,10 @@ class C_data{
 
   } // end of function _setData
 
+  /**
+   * call DB's Api
+   * @param {string} dtRange ={1h, 12h, 1d, 7d, 1m, 6m, 1y}
+   */
   callApi2SelectRawData(dtRange){
 
     let url = config.getapiURL();
@@ -109,10 +133,8 @@ class C_data{
 
 /****
  * 
- * 
  *  class for graph
- * 
- * 
+ *  
  */
 class C_d3Graph{
 
@@ -130,22 +152,22 @@ class C_d3Graph{
     this.xLabel = "Datetime";
     this.yTempLabel = "Temperature (°C)";
     this.dbTag2LineLab= [];
-    this.dbTag2LineLab.push({dbTag: "raspiWeatherStation01", lineLable: "office"});
-    this.dbTag2LineLab.push({dbTag: "raspiWeatherStation02", lineLable: "home"});
+    this.dbTag2LineLab.push({dbTag: C_device.getDeviceNo1Name(), lineLable: "office"});
+    this.dbTag2LineLab.push({dbTag: C_device.getDeviceNo2Name(), lineLable: "home"});
 
-    // add the TEMP graph SVG 
+    // TEMP graph: add the SVG 
     this.tempGraphSvg = d3.select("#tempChart")
                           .attr("viewBox", this.viewBoxSize)       
                           .append("g")
                           .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")                     
-    // add X axis label on TEMP
+    // TEMP graph: add X axis label
     this.tempGraphSvg.append("text")
                     .attr("class", "x label")
                     .attr("text-anchor", "end")
                     .attr("x", this.width/2)
                     .attr("y", this.height+this.margin.bottom - 5)   // -5 for the border
                     .text(this.xLabel);
-    // add Y axis label on TEMP
+    // TEMP graph: add Y axis label
     this.tempGraphSvg.append("text")
                     .attr("class", "y label")
                     .attr("text-anchor", "end")    
@@ -153,56 +175,57 @@ class C_d3Graph{
                     .attr("x", 0 - this.height/2 + 50)  // 50 for text length
                     .attr("y", 0 - this.margin.left/2 - 10)  // 10 for fine tuning
                     .text(this.yTempLabel);
-    // add the line label on TEMP
+    // TEMP graph: add the line label
     this.tempGraphSvg.append("text")
-                     .attr("id", "tempLine1Lab")
+                    .attr("id", "tempLine1Lab")
     this.tempGraphSvg.append("text")
-                     .attr("id", "tempLine2Lab")
-     // add the x-domain on TEMP
-    this.tempGraphX = d3.scaleTime().range([ 0, this.width ]);
+                    .attr("id", "tempLine2Lab")
+     // TEMP graph: add the x-domain
+    this.tempGraphXConfig = d3.scaleTime().range([ 0, this.width ]);
     this.tempGraphSvg.append("g")
-                      .attr("id", "tempXDomain")
-    // the the y-domain on TEMP
-    this.tempGraphY = d3.scaleLinear().range([ this.height, 0 ]);
+                    .attr("id", "tempXDomain")
+    // TEMP graph: the the y-domain
+    this.tempGraphYConfig = d3.scaleLinear().range([ this.height, 0 ]);
     this.tempGraphSvg.append("g")
-                      .attr("id", "tempYDomain")
+                    .attr("id", "tempYDomain")
     this.tempGraphSvg.append("g")
-                      .attr("id", "tempGrid")   
-                      .attr("class", "grid")
-                      
-
-      
-
+                    .attr("id", "tempGrid")   
+                    .attr("class", "grid")
+                    
   } // end of constructor
 
+  /**
+   * initialize the temperature (TEMP) graph, humidity graph (HUM) and pressure graph (PRS)
+   * @param {object array}  weatherData data; array of object {device ∈ <string>, date ∈ <date>, temp ∈ <number>, hum ∈ <number>, prs ∈ <number>}
+   */
   initGraph(weatherData){
           
-    // init the X axis unit, according to the data
-    this.tempGraphX = d3.scaleTime()
-                        .domain(d3.extent(weatherData, function(d) { return d.date; }))        
-                        .range([ 0, this.width ]);      
-    var tempXDomain = d3.select("#tempXDomain");   
+    // TEMP graph: init the X axis unit, according to the data
+    this.tempGraphXConfig = d3.scaleTime()
+                            .domain(d3.extent(weatherData, function(d) { return d.date; }))        
+                            .range([ 0, this.width ]);      
+    let tempXDomain = d3.select("#tempXDomain");   
     tempXDomain.attr("transform", "translate(0," + this.height + ")")
-                .call(d3.axisBottom(this.tempGraphX));
+              .call(d3.axisBottom(this.tempGraphXConfig));
                      
-    // init the Y axis unit, according to the data
-    this.tempGraphY = d3.scaleLinear()
-                        .domain(d3.extent(weatherData, function(d) { return d.temp; }))   
-                        .range([ this.height, 0 ]);   
-    var tempYDomain = d3.select("#tempYDomain");       
-    tempYDomain.call(d3.axisLeft(this.tempGraphY));
+    // TEMP graph: init the Y axis unit, according to the data
+    this.tempGraphYConfig = d3.scaleLinear()
+                              .domain(d3.extent(weatherData, function(d) { return d.temp; }))   
+                              .range([ this.height, 0 ]);   
+    let tempYDomain = d3.select("#tempYDomain");       
+    tempYDomain.call(d3.axisLeft(this.tempGraphYConfig));
 
-    // init the grid
-    d3.select("#tempGrid").call(d3.axisLeft(this.tempGraphY)
-    .tickSize(-this.width)
-    .tickFormat(""));
+    // TEMP graph: init the grid
+    d3.select("#tempGrid").call(d3.axisLeft(this.tempGraphYConfig)
+                          .tickSize(-this.width)
+                          .tickFormat(""));
 
-    // add line No1
-    let x = this.tempGraphX;
-    let y = this.tempGraphY;
+    // TEMP graph: add line No1
+    let x = this.tempGraphXConfig;
+    let y = this.tempGraphYConfig;
     this.tempGraphSvg.append("path")
-                    .datum(weatherData.filter(x => x.device == "raspiWeatherStation01"))
-                    .attr("id", "tempLine")
+                    .datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+                    .attr("id", "tempLineNo1")
                     .attr("fill", "none")
                     .attr("stroke", "steelblue")
                     .attr("stroke-width", 1.5)
@@ -210,149 +233,88 @@ class C_d3Graph{
                                   .x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.temp) })
                           );
-    // add Line No1 Label
+    // TEMP graph: add Line No1 Label
     var tempLine1Lab = d3.select("#tempLine1Lab")
-                          .attr("transform", "translate(" + (this.width+3) 
-                                + "," + y(weatherData.filter(x => x.device == "raspiWeatherStation01")[weatherData.length-1].temp) + ")")
-    
-                      .attr("dy", ".35em")
-                      .attr("text-anchor", "start")
-                      .style("fill", "steelblue")
-                      .text(this.dbTag2LineLab.find(x => x.dbTag == "raspiWeatherStation01").lineLable);
+                        .attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")")
+                        .attr("dy", ".35em")
+                        .attr("text-anchor", "start")
+                        .style("fill", "steelblue")
+                        .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo1Name()).lineLable);
 
     // Add line No2
-    var line2Data = weatherData.filter(x => x.device == "raspiWeatherStation02");
+    let line2Data = weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
 
-/*
- // Create the circle that travels along the curve of chart
- let focus = svg.append('g')
-                 .append('circle')
-                 .style("fill", "none")
-                 .attr('r', 4.5)
-                 .attr("stroke", "red") 
-                 .style("opacity", 0)
-
- // Create the text that travels along the curve of chart
- let focusText = svg.append('g')
-                     .append('text')
-                     .style("opacity", 0)
-                     .attr("text-anchor", "left")
-                     .attr("font-size", "14px")
-                     .attr("stroke", "indianred") 
-                     .attr("alignment-baseline", "middle");
-
- // Create a rect on top of the svg area: this rectangle recovers mouse position
- svg.append('rect')
-     .style("fill", "none")
-     .style("pointer-events", "all")
-     .attr('width', width)
-     .attr('height', height)
-     .on("mouseover", function() { 
-                       focus.style("opacity", 1)
-                       focusText.style("opacity",1) 
-                     }
-     )
-     .on("mouseout", function() { 
-                     focus.style("opacity", 0)
-                     focusText.style("opacity",0); 
-                   }
-     )
-     .on("mousemove", mouseMove);
-
- function mouseMove() {
-
-   // recover coordinate we need 
-   const findSelectedDate = (callback)=>{
-
-     let x0 = x.invert(d3.mouse(this)[0]);
-     let index = d3.bisectLeft(weatherData.map(x => x.date), x0);
-     let d0 = weatherData[index - 1];
-     let d1 = weatherData[index];
-     let selectedDate = x0 - d0.date > d1.date - x0 ? d1 : d0;
-     callback( selectedDate);
-   };
-
-   findSelectedDate((selectedData)=>{
-
-     let xText = selectedData.date.getFullYear() 
-                 + "-"
-                 + selectedData.date.getMonth()
-                 + "-"
-                 + selectedData.date.getDate()
-                 + " "
-                 +("0" + selectedData.date.getHours()).slice(-2)
-                 + ":"
-                 +("0" + selectedData.date.getMinutes()).slice(-2)
-     let yText = parseFloat(selectedData.temp).toFixed(1);
-
-     focus.attr("cx", x(selectedData.date))
-           .attr("cy", y(selectedData.temp));
-
-     focusText.html(xText)
-               .attr("x", x(selectedData.date)+15)
-               .attr("y", y(selectedData.temp))
-               .attr('class', 'id')
-               .append('svg:tspan')
-               .attr("x", x(selectedData.date)+15)
-               .attr("y", y(selectedData.temp)+20)
-               .text(yText + "°C");
-   })
-   */
   } // end of function of initGraph
 
+  /**
+   * change the graph according to the time-domain clicked by the user
+   * @param {object array}  weatherData data; array of object {device ∈ <string>, date ∈ <date>, temp ∈ <number>, hum ∈ <number>, prs ∈ <number>}
+   */
   switchGraph(weatherData){
 
-      // re-draw domain, according to the new data
-      this.tempGraphX.domain(d3.extent(weatherData, function(d) { return d.date; }))
-      this.tempGraphY.domain(d3.extent(weatherData, function(d) { return d.temp; }))
-      var tempXDomain = d3.select("#tempXDomain");
-      var tempYDomain = d3.select("#tempYDomain");
+      // TEMP graph: re-draw the domain, according to the new data
+      this.tempGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
+      this.tempGraphYConfig.domain(d3.extent(weatherData, function(d) { return d.temp; }))
+      let tempXDomain = d3.select("#tempXDomain");
+      let tempYDomain = d3.select("#tempYDomain");
       tempXDomain.attr("transform", "translate(0," + this.height + ")")
-                  .call(d3.axisBottom(this.tempGraphX));
+                .call(d3.axisBottom(this.tempGraphXConfig));
+      tempYDomain.call(d3.axisLeft(this.tempGraphYConfig));
 
-      tempYDomain.call(d3.axisLeft(this.tempGraphY));
+      // TEMP graph: re-draw the line, according to the new data
+      let x = this.tempGraphXConfig;
+      let y = this.tempGraphYConfig;
+      let tempLineNo1 = d3.select('#tempLineNo1')
+      tempLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+                .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                    .y(function(d) { return y(d.temp) })
+                      );
 
-
-      // re-draw the line, according to the new data
-      let x = this.tempGraphX;
-      let y = this.tempGraphY;
-      var path = d3.select('#tempLine')
-      path.datum(weatherData).attr("id", "tempLine")
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line().x(function(d) { return x(d.date) })
-                    .y(function(d) { return y(d.temp) })
-            )
+    // TEMP graph: relocate the Line No1 Label
+    let tempLine1Lab = d3.select("#tempLine1Lab")
+                        .attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")")
 
   } // end of function switchGraph
     
+  /**
+   * realtime update the graph
+   * @param {object array}  weatherData data; array of object {device ∈ <string>, date ∈ <date>, temp ∈ <number>, hum ∈ <number>, prs ∈ <number>}
+   */
   updateData(weatherData){
 
-    // update the line
-    this.tempGraphX.domain(d3.extent(weatherData, function(d) { return d.date; }))
-    this.tempGraphY.domain(d3.extent(weatherData, function(d) { return d.temp; }))
-    let x = this.tempGraphX;
-    let y = this.tempGraphY;
-    var chart = d3.select('#tempChart')
-    var path = d3.select('#tempLine')
-    path.datum(weatherData).attr("id", "tempLine")
-    .attr("fill", "none")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 1.5)
-    .attr("d", d3.line().x(function(d) { return x(d.date) })
-                  .y(function(d) { return y(d.temp) })
-          )
+      // TEMP graph: shift the domain,  according to new data
+    this.tempGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
+    this.tempGraphYConfig.domain(d3.extent(weatherData, function(d) { return d.temp; }))
+    let tempXDomain = d3.select("#tempXDomain");
+    let tempYDomain = d3.select("#tempYDomain");
+    tempXDomain.attr("transform", "translate(0," + this.height + ")")
+              .transition()
+              .duration(1000)
+              .ease(d3.easeLinear,2)          
+              .call(d3.axisBottom(this.tempGraphXConfig));
+    tempYDomain.transition()
+              .duration(1000)
+              .ease(d3.easeLinear,2)          
+              .call(d3.axisLeft(this.tempGraphYConfig));
 
-    // Shift the chart left
-    chart.select('g')
-    .transition()
-    .duration(1000)
-    .ease(d3.easeLinear,2)
-    .call(d3.axisBottom(this.tempGraphX));
+    // TEMP graph: update the line, according to new data
+    let x = this.tempGraphXConfig;
+    let y = this.tempGraphYConfig;
+    let tempLineNo1 = d3.select('#tempLineNo1')
+    tempLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.temp) })
+                    );
+  
+    // TEMP graph: relocate the Line No1 Label
+    let tempLine1Lab = d3.select("#tempLine1Lab")
+                        .attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")");
 
 
-} // end of function updateData
+  } // end of function updateData
 
 
 } // end of initGraph
@@ -389,23 +351,25 @@ class C_button{
       case "1y":
         btId = "1yButton";
         break;
-    }
+  }
 
-    document.getElementById(btId).addEventListener('click', function(){
+  document.getElementById(btId).addEventListener('click', function(){
       this.clickMe(this.dtRange);   
       console.log("pressed " + dtRange + " button");
     }.bind(this));
 
-  }
+  } 
 
+  /**
+   * This function will be riggered in case of clicking the conresponding button.
+   * The web will change the graph according to the time-domain clicked by the user
+   */
   async clickMe(){
 
     // remember which date-range user clicked
     localStorage.setItem("dtRange", this.dtRange);
 
     // refresh the data
-    //let c_d3Graph = this.c_d3Graph;
-    //let weatherData = this.c_data.data;
     await this.c_data.callApi2SelectRawData(this.dtRange);
     this.c_d3Graph.switchGraph(this.c_data.data);
   }
@@ -414,18 +378,25 @@ class C_button{
 
 /*** ****************** *****/
 /*                        */
-/*  for initization      */
+/*  initization in here    */
 /*                        */
 /***************************/
-c_data = new C_data();
-if(! (dtRange = localStorage.getItem('dtRange')))
+const refreshTime = 60000; // in ms
+if(! (dtRange = localStorage.getItem('dtRange'))){
   dtRange = "1h";
+}
 
 (async () => {
-  await c_data.callApi2SelectRawData(dtRange);
-  c_d3Graph = new C_d3Graph();
-  c_d3Graph.initGraph(c_data.data);
 
+    // get data from Api
+    c_data = new C_data();
+    await c_data.callApi2SelectRawData(dtRange);
+
+    // init the graph
+    c_d3Graph = new C_d3Graph();
+    c_d3Graph.initGraph(c_data.data);
+
+    // add event to button
     c_bt1h = new C_button("1h", c_d3Graph);
     c_bt12h = new C_button("12h", c_d3Graph);
     c_bt1d = new C_button("1d", c_d3Graph);
@@ -433,13 +404,14 @@ if(! (dtRange = localStorage.getItem('dtRange')))
     c_bt1m = new C_button("1m", c_d3Graph);
     c_bt6m = new C_button("6m", c_d3Graph);
     c_bt1y = new C_button("1y", c_d3Graph);
-   
+
+    // realtime refresh the graph, according to new data
+    setInterval(async function(){
+  
+      dtRange = localStorage.getItem('dtRange')
+      await c_data.callApi2SelectRawData(dtRange);
+      c_d3Graph = new C_d3Graph();
+      c_d3Graph.updateData(c_data.data);
+    }, refreshTime //1000 = 1s
+    ) 
 })();
-
-
-
-
- /*
- C_thisPage.readtimeDataLoading();
-
-*/
