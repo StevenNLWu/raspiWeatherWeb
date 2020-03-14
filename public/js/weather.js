@@ -119,7 +119,7 @@ class C_data{
       console.log(new Date().toLocaleString()
                   + ": " 
                   + status + "; "
-                  + "Get / " + this.pageUrl + "param={" + dtRange + "}; "
+                  + "Get / " + url + "param={" + dtRange + "}; "
                   + error.toString()
                   );
     }).always(function() {
@@ -151,6 +151,8 @@ class C_d3Graph{
     // label variable
     this.xLabel = "Datetime";
     this.yTempLabel = "Temperature (°C)";
+    this.yHumLabel = "Humidity (%)";
+    this.yPrsLabel = "Pressure (hPa)";
     this.dbTag2LineLab= [];
     this.dbTag2LineLab.push({dbTag: C_device.getDeviceNo1Name(), lineLable: "office"});
     this.dbTag2LineLab.push({dbTag: C_device.getDeviceNo2Name(), lineLable: "home"});
@@ -164,13 +166,15 @@ class C_d3Graph{
     this.tempGraphSvg.append("text")
                     .attr("class", "x label")
                     .attr("text-anchor", "end")
+                    .attr("font-weight", "bold")
                     .attr("x", this.width/2)
                     .attr("y", this.height+this.margin.bottom - 5)   // -5 for the border
                     .text(this.xLabel);
     // TEMP graph: add Y axis label
     this.tempGraphSvg.append("text")
                     .attr("class", "y label")
-                    .attr("text-anchor", "end")    
+                    .attr("text-anchor", "end")   
+                    .attr("font-weight", "bold") 
                     .attr("transform", "rotate(-90)")
                     .attr("x", 0 - this.height/2 + 50)  // 50 for text length
                     .attr("y", 0 - this.margin.left/2 - 10)  // 10 for fine tuning
@@ -184,14 +188,101 @@ class C_d3Graph{
     this.tempGraphXConfig = d3.scaleTime().range([ 0, this.width ]);
     this.tempGraphSvg.append("g")
                     .attr("id", "tempXDomain")
-    // TEMP graph: the the y-domain
+                    .attr("font-weight", "bold")
+    // TEMP graph: add the the y-domain
     this.tempGraphYConfig = d3.scaleLinear().range([ this.height, 0 ]);
     this.tempGraphSvg.append("g")
                     .attr("id", "tempYDomain")
+                    .attr("font-weight", "bold")
+    // TEMP graph: add grid
     this.tempGraphSvg.append("g")
                     .attr("id", "tempGrid")   
+                    .attr("class", "grid")        
+
+    // HUM graph: add the SVG 
+    this.humGraphSvg = d3.select("#humChart")
+                          .attr("viewBox", this.viewBoxSize)       
+                          .append("g")
+                          .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")                     
+    // HUM graph: add X axis label
+    this.humGraphSvg.append("text")
+                    .attr("class", "x label")
+                    .attr("text-anchor", "end")
+                    .attr("font-weight", "bold")
+                    .attr("x", this.width/2)
+                    .attr("y", this.height+this.margin.bottom - 5)   // -5 for the border
+                    .text(this.xLabel);
+    // HUM graph: add Y axis label
+    this.humGraphSvg.append("text")
+                    .attr("class", "y label")
+                    .attr("text-anchor", "end")    
+                    .attr("font-weight", "bold")
+                    .attr("transform", "rotate(-90)")
+                    .attr("x", 0 - this.height/2 + 50)  // 50 for text length
+                    .attr("y", 0 - this.margin.left/2 - 10)  // 10 for fine tuning
+                    .text(this.yHumLabel);
+    // HUM graph: add the line label
+    this.humGraphSvg.append("text")
+                    .attr("id", "humLine1Lab")
+    this.humGraphSvg.append("text")
+                    .attr("id", "humLine2Lab")
+     // HUM graph: add the x-domain
+    this.humGraphXConfig = d3.scaleTime().range([ 0, this.width ]);
+    this.humGraphSvg.append("g")
+                    .attr("id", "humXDomain")
+                    .attr("font-weight", "bold")
+    // HUM graph: add the y-domain
+    this.humGraphYConfig = d3.scaleLinear().range([ this.height, 0 ]);
+    this.humGraphSvg.append("g")
+                    .attr("id", "humYDomain")
+                    .attr("font-weight", "bold")
+    // HUM graph: add grid                    
+    this.humGraphSvg.append("g")
+                    .attr("id", "humGrid")   
                     .attr("class", "grid")
-                    
+
+    // PRS graph: add the SVG 
+    this.prsGraphSvg = d3.select("#prsChart")
+                        .attr("viewBox", this.viewBoxSize)       
+                        .append("g")
+                        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")                     
+    // PRS graph: add X axis label
+    this.prsGraphSvg.append("text")
+                    .attr("class", "x label")
+                    .attr("text-anchor", "end")
+                    .attr("font-weight", "bold")
+                    .attr("x", this.width/2)
+                    .attr("y", this.height+this.margin.bottom - 5)   // -5 for the border
+                    .text(this.xLabel);
+    // PRS graph: add Y axis label
+    this.prsGraphSvg.append("text")
+                    .attr("class", "y label")
+                    .attr("text-anchor", "end")    
+                    .attr("font-weight", "bold")
+                    .attr("transform", "rotate(-90)")
+                    .attr("x", 0 - this.height/2 + 50)  // 50 for text length
+                    .attr("y", 0 - this.margin.left/2 - 10)  // 10 for fine tuning
+                    .text(this.yPrsLabel);
+    // PRS graph: add the line label
+    this.prsGraphSvg.append("text")
+                    .attr("id", "prsLine1Lab")
+    this.prsGraphSvg.append("text")
+                    .attr("id", "prsLine2Lab")
+    // PRS graph: add the x-domain
+    this.prsGraphXConfig = d3.scaleTime().range([ 0, this.width ]);
+    this.prsGraphSvg.append("g")
+                    .attr("id", "prsXDomain")
+                    .attr("font-weight", "bold")
+    // PRS graph: add the y-domain
+    this.prsGraphYConfig = d3.scaleLinear().range([ this.height, 0 ]);
+    this.prsGraphSvg.append("g")
+                    .attr("id", "prsYDomain")
+                    .attr("font-weight", "bold")
+    // PRS graph: add grid    
+    this.prsGraphSvg.append("g")
+                    .attr("id", "prsGrid")   
+                    .attr("class", "grid");
+
   } // end of constructor
 
   /**
@@ -206,20 +297,17 @@ class C_d3Graph{
                             .range([ 0, this.width ]);      
     let tempXDomain = d3.select("#tempXDomain");   
     tempXDomain.attr("transform", "translate(0," + this.height + ")")
-              .call(d3.axisBottom(this.tempGraphXConfig));
-                     
+              .call(d3.axisBottom(this.tempGraphXConfig));               
     // TEMP graph: init the Y axis unit, according to the data
     this.tempGraphYConfig = d3.scaleLinear()
                               .domain(d3.extent(weatherData, function(d) { return d.temp; }))   
                               .range([ this.height, 0 ]);   
     let tempYDomain = d3.select("#tempYDomain");       
     tempYDomain.call(d3.axisLeft(this.tempGraphYConfig));
-
     // TEMP graph: init the grid
     d3.select("#tempGrid").call(d3.axisLeft(this.tempGraphYConfig)
                           .tickSize(-this.width)
                           .tickFormat(""));
-
     // TEMP graph: add line No1
     let x = this.tempGraphXConfig;
     let y = this.tempGraphYConfig;
@@ -234,16 +322,95 @@ class C_d3Graph{
                                   .y(function(d) { return y(d.temp) })
                           );
     // TEMP graph: add Line No1 Label
-    var tempLine1Lab = d3.select("#tempLine1Lab")
-                        .attr("transform", "translate(" + (this.width+3) 
+    d3.select("#tempLine1Lab").attr("transform", "translate(" + (this.width+3) 
                               + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")")
-                        .attr("dy", ".35em")
-                        .attr("text-anchor", "start")
-                        .style("fill", "steelblue")
-                        .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo1Name()).lineLable);
-
+                            .attr("dy", ".35em")
+                            .attr("text-anchor", "start")
+                            .style("fill", "steelblue")
+                            .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo1Name()).lineLable);
     // Add line No2
-    let line2Data = weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+    // (not implement yet)
+    //weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+
+    // HUM graph: init the X axis unit, according to the data
+    this.humGraphXConfig = d3.scaleTime()
+                            .domain(d3.extent(weatherData, function(d) { return d.date; }))        
+                            .range([ 0, this.width ]);      
+    let humXDomain = d3.select("#humXDomain");   
+    humXDomain.attr("transform", "translate(0," + this.height + ")")
+              .call(d3.axisBottom(this.humGraphXConfig));                     
+    // HUM graph: init the Y axis unit, according to the data
+    this.humGraphYConfig = d3.scaleLinear()
+                              .domain(d3.extent(weatherData, function(d) { return d.hum; }))   
+                              .range([ this.height, 0 ]);   
+    let humYDomain = d3.select("#humYDomain");       
+    humYDomain.call(d3.axisLeft(this.humGraphYConfig));
+    // HUM graph: init the grid
+    d3.select("#humGrid").call(d3.axisLeft(this.humGraphYConfig)
+                          .tickSize(-this.width)
+                          .tickFormat(""));
+    // HUM graph: add line No1
+    x = this.humGraphXConfig;
+    y = this.humGraphYConfig;
+    this.humGraphSvg.append("path")
+                    .datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+                    .attr("id", "humLineNo1")
+                    .attr("fill", "none")
+                    .attr("stroke", "steelblue")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", d3.line()
+                                  .x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.hum) })
+                          );
+    // HUM graph: add Line No1 Label
+    d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].hum) + ")")
+                            .attr("dy", ".35em")
+                            .attr("text-anchor", "start")
+                            .style("fill", "steelblue")
+                            .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo1Name()).lineLable);
+    // Add line No2
+    // (not implement yet)
+
+    // PRS graph: init the X axis unit, according to the data
+    this.prsGraphXConfig = d3.scaleTime()
+                            .domain(d3.extent(weatherData, function(d) { return d.date; }))        
+                            .range([ 0, this.width ]);      
+    let prsXDomain = d3.select("#prsXDomain");   
+    prsXDomain.attr("transform", "translate(0," + this.height + ")")
+              .call(d3.axisBottom(this.prsGraphXConfig));               
+    // PRS graph: init the Y axis unit, according to the data
+    this.prsGraphYConfig = d3.scaleLinear()
+                              .domain(d3.extent(weatherData, function(d) { return d.prs; }))   
+                              .range([ this.height, 0 ]);   
+    let prsYDomain = d3.select("#prsYDomain");       
+    prsYDomain.call(d3.axisLeft(this.prsGraphYConfig).tickFormat(function(d){return d3.format(".2f")(d)}));      
+    // PRS graph: init the grid
+    d3.select("#prsGrid").call(d3.axisLeft(this.prsGraphYConfig)
+                          .tickSize(-this.width)
+                          .tickFormat(""));
+    // PRS graph: add line No1
+    x = this.prsGraphXConfig;
+    y = this.prsGraphYConfig;
+    this.prsGraphSvg.append("path")
+                    .datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+                    .attr("id", "prsLineNo1")
+                    .attr("fill", "none")
+                    .attr("stroke", "steelblue")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", d3.line()
+                                  .x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.prs) })
+                          );
+    // PRS graph: add Line No1 Label
+    d3.select("#prsLine1Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].prs) + ")")
+                            .attr("dy", ".35em")
+                            .attr("text-anchor", "start")
+                            .style("fill", "steelblue")
+                            .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo1Name()).lineLable);
+    // Add line No2
+    // (not implement yet)
 
   } // end of function of initGraph
 
@@ -253,28 +420,66 @@ class C_d3Graph{
    */
   switchGraph(weatherData){
 
-      // TEMP graph: re-draw the domain, according to the new data
-      this.tempGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
-      this.tempGraphYConfig.domain(d3.extent(weatherData, function(d) { return d.temp; }))
-      let tempXDomain = d3.select("#tempXDomain");
-      let tempYDomain = d3.select("#tempYDomain");
-      tempXDomain.attr("transform", "translate(0," + this.height + ")")
-                .call(d3.axisBottom(this.tempGraphXConfig));
-      tempYDomain.call(d3.axisLeft(this.tempGraphYConfig));
-
-      // TEMP graph: re-draw the line, according to the new data
-      let x = this.tempGraphXConfig;
-      let y = this.tempGraphYConfig;
-      let tempLineNo1 = d3.select('#tempLineNo1')
-      tempLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
-                .attr("d", d3.line().x(function(d) { return x(d.date) })
-                                    .y(function(d) { return y(d.temp) })
-                      );
-
+    // TEMP graph: re-draw the domain, according to the new data
+    this.tempGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
+    this.tempGraphYConfig.domain(d3.extent(weatherData, function(d) { return d.temp; }))
+    let tempXDomain = d3.select("#tempXDomain");
+    let tempYDomain = d3.select("#tempYDomain");
+    tempXDomain.attr("transform", "translate(0," + this.height + ")")
+              .call(d3.axisBottom(this.tempGraphXConfig));
+    tempYDomain.call(d3.axisLeft(this.tempGraphYConfig));
+    // TEMP graph: re-draw the line, according to the new data
+    let x = this.tempGraphXConfig;
+    let y = this.tempGraphYConfig;
+    let tempLineNo1 = d3.select('#tempLineNo1')
+    tempLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.temp) })
+                    );
     // TEMP graph: relocate the Line No1 Label
-    let tempLine1Lab = d3.select("#tempLine1Lab")
-                        .attr("transform", "translate(" + (this.width+3) 
-                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")")
+    d3.select("#tempLine1Lab").attr("transform", "translate(" + (this.width+3) 
+                                    + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")")
+
+    // HUM graph: re-draw the domain, according to the new data
+    this.humGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
+    this.humGraphYConfig.domain(d3.extent(weatherData, function(d) { return d.hum; }))
+    let humXDomain = d3.select("#humXDomain");
+    let humYDomain = d3.select("#humYDomain");
+    humXDomain.attr("transform", "translate(0," + this.height + ")")
+              .call(d3.axisBottom(this.humGraphXConfig));
+    humYDomain.call(d3.axisLeft(this.humGraphYConfig));
+    // HUM graph: re-draw the line, according to the new data
+    x = this.humGraphXConfig;
+    y = this.humGraphYConfig;
+    let humLineNo1 = d3.select('#humLineNo1')
+    humLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.hum) })
+                    );
+    // HUM graph: relocate the Line No1 Label
+    d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
+                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].hum) + ")")
+
+    // PRS graph: re-draw the domain, according to the new data
+    this.prsGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
+    this.prsGraphYConfig.domain(d3.extent(weatherData, function(d) { return d.prs; }))
+    let prsXDomain = d3.select("#prsXDomain");
+    let prsYDomain = d3.select("#prsYDomain");
+    prsXDomain.attr("transform", "translate(0," + this.height + ")")
+              .call(d3.axisBottom(this.prsGraphXConfig));
+    prsYDomain.call(d3.axisLeft(this.prsGraphYConfig).tickFormat(function(d){return d3.format(".2f")(d)}));      
+    // PRS graph: re-draw the line, according to the new data
+    x = this.prsGraphXConfig;
+    y = this.prsGraphYConfig;
+    let prsLineNo1 = d3.select('#prsLineNo1')
+    prsLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.prs) })
+                    );
+    // PRS graph: relocate the Line No1 Label
+    d3.select("#prsLine1Lab").attr("transform", "translate(" + (this.width+3) 
+                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].prs) + ")")
+
 
   } // end of function switchGraph
     
@@ -307,12 +512,62 @@ class C_d3Graph{
               .attr("d", d3.line().x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.temp) })
                     );
-  
     // TEMP graph: relocate the Line No1 Label
-    let tempLine1Lab = d3.select("#tempLine1Lab")
-                        .attr("transform", "translate(" + (this.width+3) 
+    d3.select("#tempLine1Lab").attr("transform", "translate(" + (this.width+3) 
                               + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")");
 
+    // HUM graph: shift the domain,  according to new data
+    this.humGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
+    this.humGraphYConfig.domain(d3.extent(weatherData, function(d) { return d.hum; }))
+    let humXDomain = d3.select("#humXDomain");
+    let humYDomain = d3.select("#humYDomain");
+    humXDomain.attr("transform", "translate(0," + this.height + ")")
+              .transition()
+              .duration(1000)
+              .ease(d3.easeLinear,2)          
+              .call(d3.axisBottom(this.humGraphXConfig));
+    humYDomain.transition()
+              .duration(1000)
+              .ease(d3.easeLinear,2)          
+              .call(d3.axisLeft(this.humGraphYConfig));
+    // HUM graph: update the line, according to new data
+    x = this.humGraphXConfig;
+    y = this.humGraphYConfig;
+    let humLineNo1 = d3.select('#humLineNo1')
+    humLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.hum) })
+                    );
+    // HUM graph: relocate the Line No1 Label
+    d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].prs) + ")");
+
+    // PRS graph: shift the domain,  according to new data
+    this.prsGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
+    this.prsGraphYConfig.domain(d3.extent(weatherData, function(d) { return d.prs; }))
+    let prsXDomain = d3.select("#prsXDomain");
+    let prsYDomain = d3.select("#prsYDomain");
+    prsXDomain.attr("transform", "translate(0," + this.height + ")")
+              .transition()
+              .duration(1000)
+              .ease(d3.easeLinear,2)          
+              .call(d3.axisBottom(this.prsGraphXConfig));
+    prsYDomain.transition()
+              .duration(1000)
+              .ease(d3.easeLinear,2)          
+              .call(d3.axisLeft(this.prsGraphYConfig).tickFormat(function(d){return d3.format(".2f")(d)}));
+
+    // PRS graph: update the line, according to new data
+    x = this.prsGraphXConfig;
+    y = this.prsGraphYConfig;
+    let prsLineNo1 = d3.select('#prsLineNo1')
+    prsLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.prs) })
+                    );
+    // PRS graph: relocate the Line No1 Label
+    d3.select("#prsLine1Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].prs) + ")");
 
   } // end of function updateData
 
