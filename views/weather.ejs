@@ -9,17 +9,21 @@
     <script src="/js/d3.min.js"></script>    
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <script src="/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/rocketpayzfont" type="text/css"/>
 
 
     <!--<link href="/css/weather.css" rel="stylesheet">-->
 
   </head>
-  <body>
-      <script src="/js/config.js"></script>  
+  <body style="background-color:wheat">
+    <script src="/js/config.js"></script>  
     <script src="/js/weather.js"></script>
     <div class="container-fluid">
-        <div id ="headerRow" class="row">
+
+        <div id ="headerRow" class="row justify-content-center" style="background-color:steelblue">
+          <h3 style="color:white; font-family:ManilaSansBold;   margin-top: 1%;">Raspberrypi Weather Sensor</h3>
         </div>
+
         <div id="mainRow" class="row">
           <!-- Create a div where the graph will take place -->
           <div id="chartCol" class= "col-9">
@@ -27,20 +31,124 @@
               <svg id="humChart"></svg>
               <svg id="prsChart"></svg>
           </div>        
-          <div id="dashboardCol" class= "col-3">
 
-              <button id="1hrButton" type="button" class="btn btn-outline-primary" >1h</button>
-              <button id="12hrButton" type="button" class="btn btn-outline-primary">12h</button>             
-              <button id="1dButton" type="button" class="btn btn-outline-primary">1d</button>     
-              <button id="7dButton" type="button" class="btn btn-outline-primary">7d</button>     
-              <button id="1mButton" type="button" class="btn btn-outline-primary">1m</button>     
-              <button id="6mButton" type="button" class="btn btn-outline-primary">6m</button>     
-              <button id="1yButton" type="button" class="btn btn-outline-primary">1y</button>     
-          </div>  
-        </div>
+          <div id="dashboardCol" style="margin-top: 3%" class= "col-3">
+
+            <div id="dashboardRowNo1" style="border-style: solid; margin-bottom:3%;">
+              <!---->
+              <div class="row" style="margin: 3%;" >   
+                <div class= "col-4" style="padding: 0px;"> 
+                  <button id="1hrButton" style="width: 100%;font-weight: 900;border-width: 2px;border-radius: 75px;" type="button" class="btn btn-outline-primary">1h</button>
+                </div>
+                <div class= "col-4" style="padding: 0px;"> 
+                  <button id="12hrButton" style="width: 100%;font-weight: 900;border-width: 2px;border-radius: 75px;" type="button" class="btn btn-outline-primary">12h</button>    
+                </div>              
+                <div class= "col-4" style="padding: 0px;"> 
+                  <button id="1dButton"  style="width: 100%;font-weight: 900;border-width: 2px;border-radius: 75px;" type="button" class="btn btn-outline-primary">1d</button>   
+                </div>
+              </div>     
+              <!---->     
+              <div class="row" style="margin: 3%;" >   
+                <div class= "col-4" style="padding: 0px;">          
+                <button id="7dButton" style="width: 100%;font-weight: 900;border-width: 2px;border-radius: 75px;" type="button" class="btn btn-outline-primary">7d</button>   
+              </div>
+                <div class= "col-4" style="padding: 0px;"> 
+                <button id="1mButton" style="width: 100%;font-weight: 900;border-width: 2px;border-radius: 75px;" type="button" class="btn btn-outline-primary">1m</button>   
+              </div>
+                <div class= "col-4" style="padding: 0px;"> 
+                <button id="6mButton" style="width: 100%;font-weight: 900;border-width: 2px;border-radius: 75px;"  type="button" class="btn btn-outline-primary">6m</button>   
+              </div>
+            </div>
+            <!---->
+            <div class="row" style="margin: 3%;" >     
+              <div class= "col-4" style="padding: 0px;"> 
+                <button id="1yButton" style="width: 100%;font-weight: 900;border-width: 2px;border-radius: 75px;" type="button" class="btn btn-outline-primary">1y</button>   
+              </div>
+            </div>   
+          </div> <!-- end of dashboardRowNo1 -->
+          
+
+          <div id="dashboardRowNo2" style="border-style: solid;">
+          <!---->
+            <div style="padding:3%; padding-top: 5%;">
+              <a class="btn btn-light btn-lg" 
+                  style="border-radius: 0px;border-color: black; display: inline;font-weight: 900;" 
+                  data-toggle="collapse" href="#panelOffice" 
+                  role="button" 
+                  aria-expanded="true" 
+                  aria-controls="panelOffice">OFFICE
+              </a>
+              <div id="panelOffice" class="show multi-collapse" style="border-color: black;border-style: solid;border-width: 1px;">
+                <div class="card" style="padding: 10px; border-radius: 0px;">
+                  <span>Last Updated: </span>
+                  <span style="font-weight: bold;text-align: center;background-color: gainsboro; color: navy;">dd/MM/yyyy HH:mm:ss</span> 
+                </div>
+                <div class="card" style="padding: 10px; border-radius: 0px;">
+                    <div>
+                      <span>Temperature: </span>
+                      <span style="font-weight: bold; background-color: gainsboro; color:crimson">23.6</span>
+                      <span> °C</span>
+                    </div>
+                </div>
+                <div class="card" style="padding: 10px; border-radius: 0px;">
+                    <div>
+                      <span>Humidity: </span>
+                      <span style="font-weight: bold; background-color: gainsboro;color:royalblue">52.1</span>
+                      <span> %</span>
+                    </div>
+                </div>
+                <div class="card" style="padding: 10px; border-radius: 0px;">
+                    <div>
+                      <span>Pressure: </span>
+                      <span style="font-weight: bold; background-color: gainsboro;color:darkcyan">1016.75</span>
+                      <span style="font-size: small;"> hPa</span>
+                    </div>
+                </div>
+              </div> <!-- end of panelOffice-->
+          </div>
+          <div style="padding:3%; padding-top: 5%;">
+              <a class="btn  btn-light btn-lg" 
+                  style="border-radius: 0px;border-color: black; display: inline;font-weight: 900;" 
+                  data-toggle="collapse" href="#panelHome" 
+                  role="button" 
+                  aria-expanded="true"
+                  aria-controls="panelHome">HOME
+              </a>
+              <div id="panelHome" class="show multi-collapse" style="border-color: black;border-style: solid;border-width: 1px;">
+                 <div class="card" style="padding: 10px; border-radius: 0px;">
+                    <span>Last Updated: </span>
+                    <span style="font-weight: bold;text-align: center;background-color: gainsboro; color: navy;">dd/MM/yyyy HH:mm:ss</span> 
+                </div>
+                <div class="card" style="padding: 10px; border-radius: 0px;">
+                  <div>
+                    <span>Temperature: </span>
+                    <span style="font-weight: bold; background-color: gainsboro; color:crimson">xx.x</span>
+                    <span> °C</span>
+                  </div>
+                </div>
+                <div class="card" style="padding: 10px; border-radius: 0px;">
+                  <div>
+                    <span>Humidity: </span>
+                    <span style="font-weight: bold; background-color: gainsboro;color:royalblue">yy.y</span>
+                    <span> %</span></div>
+                </div>
+                <div class="card" style="padding: 10px; border-radius: 0px;">
+                    <div>
+                      <span>Pressure: </span>
+                      <span style="font-weight: bold; background-color: gainsboro;color:darkcyan">zzzz.zz</span>
+                      <span style="font-size: small;"> hPa</span>
+                    </div>
+                </div>
+              </div> <!-- end of panelHome -->
+          </div>      
+        </div> <!-- end of dashboardRowNo2 -->
 
 
-    </div>
+      </div>   <!-- end of dashboardCol -->
+    </div> <!-- end of mainRow -->
 
-  </body>
+
+  </div> <!-- end of container -->
+
+</body>
 </html>

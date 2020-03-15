@@ -540,7 +540,7 @@ class C_d3Graph{
                     );
     // HUM graph: relocate the Line No1 Label
     d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].prs) + ")");
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].hum) + ")");
 
     // PRS graph: shift the domain,  according to new data
     this.prsGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
