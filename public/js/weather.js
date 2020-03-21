@@ -26,6 +26,7 @@ class C_data{
   constructor(){
 
     this.data;
+    this.lastestData;
     this.dbSize;
 
   }
@@ -73,10 +74,18 @@ class C_data{
                                         , temp: x.avgTemp
                                         , hum: x.avgHum
                                         , prs: x.avgPrs
+                                        
                                         })
                               );
     this.data.sort((x1, x2) => x1.date- x2.date);
 
+    this.lastestData = rawData.lastRecord.map(x=>({device: x._id
+                                                  , date: new Date(x.lastUpdated)
+                                                  , temp: x.temp
+                                                  , hum: x.hum
+                                                  , prs: x.prs
+                                                })
+                                              );
 
   } // end of function _setData
 
@@ -323,7 +332,8 @@ class C_d3Graph{
                           );
     // TEMP graph: add Line No1 Label
     d3.select("#tempLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")")
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                                      [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].temp) + ")")
                             .attr("dy", ".35em")
                             .attr("text-anchor", "start")
                             .style("fill", "steelblue")
@@ -364,7 +374,8 @@ class C_d3Graph{
                           );
     // HUM graph: add Line No1 Label
     d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].hum) + ")")
+                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                                  [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].hum) + ")")
                             .attr("dy", ".35em")
                             .attr("text-anchor", "start")
                             .style("fill", "steelblue")
@@ -404,7 +415,9 @@ class C_d3Graph{
                           );
     // PRS graph: add Line No1 Label
     d3.select("#prsLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].prs) + ")")
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                              [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].prs) + ")")
+                              
                             .attr("dy", ".35em")
                             .attr("text-anchor", "start")
                             .style("fill", "steelblue")
@@ -438,7 +451,8 @@ class C_d3Graph{
                     );
     // TEMP graph: relocate the Line No1 Label
     d3.select("#tempLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                                    + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")")
+                                    + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                                    [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].temp) + ")")
 
     // HUM graph: re-draw the domain, according to the new data
     this.humGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
@@ -458,7 +472,8 @@ class C_d3Graph{
                     );
     // HUM graph: relocate the Line No1 Label
     d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].hum) + ")")
+                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                                  [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].hum) + ")")
 
     // PRS graph: re-draw the domain, according to the new data
     this.prsGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
@@ -478,7 +493,8 @@ class C_d3Graph{
                     );
     // PRS graph: relocate the Line No1 Label
     d3.select("#prsLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].prs) + ")")
+                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                                  [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].prs) + ")")
 
 
   } // end of function switchGraph
@@ -514,7 +530,8 @@ class C_d3Graph{
                     );
     // TEMP graph: relocate the Line No1 Label
     d3.select("#tempLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].temp) + ")");
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                              [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].temp) + ")");
 
     // HUM graph: shift the domain,  according to new data
     this.humGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
@@ -540,7 +557,8 @@ class C_d3Graph{
                     );
     // HUM graph: relocate the Line No1 Label
     d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].hum) + ")");
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                              [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].hum) + ")");
 
     // PRS graph: shift the domain,  according to new data
     this.prsGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
@@ -567,7 +585,8 @@ class C_d3Graph{
                     );
     // PRS graph: relocate the Line No1 Label
     d3.select("#prsLine1Lab").attr("transform", "translate(" + (this.width+3) 
-                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())[weatherData.length-1].prs) + ")");
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
+                              [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].prs) + ")");
 
   } // end of function updateData
 
@@ -647,6 +666,13 @@ if(! (dtRange = localStorage.getItem('dtRange'))){
     c_data = new C_data();
     await c_data.callApi2SelectRawData(dtRange);
 
+    // init the panel
+    
+    $('.panelOffice')[0].textContent = (c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+    $('.panelOffice')[1].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].temp).toFixed(1);
+    $('.panelOffice')[2].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].hum).toFixed(1);
+    $('.panelOffice')[3].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].prs).toFixed(2);
+
     // init the graph
     c_d3Graph = new C_d3Graph();
     c_d3Graph.initGraph(c_data.data);
@@ -667,6 +693,13 @@ if(! (dtRange = localStorage.getItem('dtRange'))){
       await c_data.callApi2SelectRawData(dtRange);
       c_d3Graph = new C_d3Graph();
       c_d3Graph.updateData(c_data.data);
+
+      // update the panel
+      $('.panelOffice')[0].textContent = (c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+      $('.panelOffice')[1].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].temp).toFixed(1);
+      $('.panelOffice')[2].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].hum).toFixed(1);
+      $('.panelOffice')[3].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].prs).toFixed(2);
+
     }, refreshTime //1000 = 1s
     ) 
 })();

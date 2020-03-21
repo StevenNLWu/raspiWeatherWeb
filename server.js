@@ -13,7 +13,7 @@ app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redi
 app.use('/js', express.static(__dirname + '/node_modules/d3/dist')); // redirect D3 JS
 app.use(express.static('public'));  // make all of the files in 'public' folder to be accessible
 
-const port = 3000;
+const port = 80;
 
 app.get('/weather', function(request, response){
 
