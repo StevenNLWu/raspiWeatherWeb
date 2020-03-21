@@ -655,7 +655,7 @@ class C_button{
 /*  initization in here    */
 /*                        */
 /***************************/
-const refreshTime = 60000; // in ms
+const refreshTime = 60000; // 60000 = 60s
 if(! (dtRange = localStorage.getItem('dtRange'))){
   dtRange = "1h";
 }
@@ -687,19 +687,26 @@ if(! (dtRange = localStorage.getItem('dtRange'))){
     c_bt1y = new C_button("1y", c_d3Graph);
 
     // realtime refresh the graph, according to new data
+    width = 0;
+    $('#bar').css('width', width + '%');
     setInterval(async function(){
   
-      dtRange = localStorage.getItem('dtRange')
-      await c_data.callApi2SelectRawData(dtRange);
-      c_d3Graph = new C_d3Graph();
-      c_d3Graph.updateData(c_data.data);
+      width += 1.6;
 
-      // update the panel
-      $('.panelOffice')[0].textContent = (c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
-      $('.panelOffice')[1].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].temp).toFixed(1);
-      $('.panelOffice')[2].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].hum).toFixed(1);
-      $('.panelOffice')[3].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].prs).toFixed(2);
+      $('#bar').css('width', width + '%');
 
-    }, refreshTime //1000 = 1s
-    ) 
+      if (width >= 100) {
+        width=0;
+        dtRange = localStorage.getItem('dtRange')
+        await c_data.callApi2SelectRawData(dtRange);
+        c_d3Graph = new C_d3Graph();
+        c_d3Graph.updateData(c_data.data);
+  
+        // update the panel
+        $('.panelOffice')[0].textContent = (c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+        $('.panelOffice')[1].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].temp).toFixed(1);
+        $('.panelOffice')[2].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].hum).toFixed(1);
+        $('.panelOffice')[3].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].prs).toFixed(2);
+      }
+    }, 1000); // 1000 = 1s
 })();
