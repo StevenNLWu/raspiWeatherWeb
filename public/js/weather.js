@@ -593,6 +593,11 @@ class C_d3Graph{
 
 } // end of initGraph
 
+/****
+ * 
+ *  class for button
+ * 
+ */
 class C_button{
 
   constructor(dtRange, c_d3Graph){
@@ -650,12 +655,61 @@ class C_button{
 } // end of class C_button
 
 
+/****
+ * 
+ *  class for panel
+ * 
+ */
+class C_panel{
+
+  constructor(){
+
+    this.officeLastUpd = $('.panelOffice')[0]
+    this.officeTemp = $('.panelOffice')[1]
+    this.officeHum = $('.panelOffice')[2]
+    this.officePrs = $('.panelOffice')[3]
+
+    this.homeLastUpd = $('.panelOffice')[0]
+    this.homeTemp = $('.panelOffice')[1]
+    this.homeHum = $('.panelOffice')[2]
+    this.homePrs = $('.panelOffice')[3]
+
+  }
+
+  /**
+   * realtime update the panel data
+   * @param {object array}  lastestData data; array of object {date ∈ <date>, device ∈ <string>, temp ∈ <number>, hum ∈ <number>, prs ∈ <number>}
+   */
+  updatePanel(lastestData){
+
+    // get the latest data
+    let offData = c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name());
+    let homeData = c_data.lastestData.filter(x => x.device == C_device.getDeviceNo2Name());
+
+    // update the panel
+    if(offData.length >0){
+      this.officeLastUpd.textContent = (offData[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+      this.officeTemp.textContent = parseFloat(offData[0].temp).toFixed(1);
+      this.officeHum.textContent = parseFloat(offData[0].hum).toFixed(1);
+      this.officePrs.textContent = parseFloat(offData[0].prs).toFixed(2);
+    }
+    if(offData.length >0){   
+      this.homeLastUpd.textContent = (offData[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+      this.homeTemp.textContent =  parseFloat(offData[0].temp).toFixed(1);
+      this.homeHum.textContent = parseFloat(offData[0].temp).toFixed(1);
+      this.homePrs.textContent =  parseFloat(offData[0].prs).toFixed(2);
+
+    }
+  }
+}
+
 /*** ****************** *****/
 /*                        */
 /*  initization in here    */
 /*                        */
 /***************************/
-const refreshTime = 60000; // 60000 = 60s
+const dataRefreshTime = 60000; // 60000 = 60s
+const barRefreshTime = 100; // 100 = 0.1s
 if(! (dtRange = localStorage.getItem('dtRange'))){
   dtRange = "1h";
 }
@@ -667,15 +721,15 @@ if(! (dtRange = localStorage.getItem('dtRange'))){
     await c_data.callApi2SelectRawData(dtRange);
 
     // init the panel
-    
-    $('.panelOffice')[0].textContent = (c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
-    $('.panelOffice')[1].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].temp).toFixed(1);
-    $('.panelOffice')[2].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].hum).toFixed(1);
-    $('.panelOffice')[3].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].prs).toFixed(2);
+    c_panel = new C_panel();
+    c_panel.updatePanel(c_data.lastestData);
 
     // init the graph
     c_d3Graph = new C_d3Graph();
     c_d3Graph.initGraph(c_data.data);
+
+    // init the dbSize
+    $('#dbSize')[0].textContent = parseFloat(c_data.dbSize/1024/1024).toFixed(2);
 
     // add event to button
     c_bt1h = new C_button("1h", c_d3Graph);
@@ -688,25 +742,26 @@ if(! (dtRange = localStorage.getItem('dtRange'))){
 
     // realtime refresh the graph, according to new data
     width = 0;
-    $('#bar').css('width', width + '%');
     setInterval(async function(){
   
-      width += 1.6;
-
+      width += 100 / (dataRefreshTime / barRefreshTime);
       $('#bar').css('width', width + '%');
 
       if (width >= 100) {
         width=0;
         dtRange = localStorage.getItem('dtRange')
         await c_data.callApi2SelectRawData(dtRange);
+
+        // refresh the graph
         c_d3Graph = new C_d3Graph();
         c_d3Graph.updateData(c_data.data);
-  
-        // update the panel
-        $('.panelOffice')[0].textContent = (c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
-        $('.panelOffice')[1].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].temp).toFixed(1);
-        $('.panelOffice')[2].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].hum).toFixed(1);
-        $('.panelOffice')[3].textContent = parseFloat(c_data.lastestData.filter(x => x.device == C_device.getDeviceNo1Name())[0].prs).toFixed(2);
+        // refresh the panel
+        c_panel = new C_panel();
+        c_panel.updatePanel(c_data.lastestData);
+        // refresh the dbSize
+        $('#dbSize')[0].textContent = parseFloat(c_data.dbSize/1024/1024).toFixed(2);
+    
       }
-    }, 1000); // 1000 = 1s
+    }, barRefreshTime); 
+    
 })();
