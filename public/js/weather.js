@@ -649,8 +649,13 @@ class C_button{
     localStorage.setItem("dtRange", this.dtRange);
 
     // refresh the data
+    $("#cover-spin").show(0);
+    $("#loader").show();
     await this.c_data.callApi2SelectRawData(this.dtRange);
     this.c_d3Graph.switchGraph(this.c_data.data);
+    $("#cover-spin").hide();
+    $("#loader").hide();
+
   }
 } // end of class C_button
 
@@ -716,52 +721,70 @@ if(! (dtRange = localStorage.getItem('dtRange'))){
 
 (async () => {
 
-    // get data from Api
-    c_data = new C_data();
-    await c_data.callApi2SelectRawData(dtRange);
+  // show loading
+  $("#cover-spin").show(0);
+  $("#loader").show();
 
-    // init the panel
-    c_panel = new C_panel();
-    c_panel.updatePanel(c_data.lastestData);
+  // get data from Api
+  c_data = new C_data();
+  await c_data.callApi2SelectRawData(dtRange);
 
-    // init the graph
-    c_d3Graph = new C_d3Graph();
-    c_d3Graph.initGraph(c_data.data);
+  // init the panel
+  c_panel = new C_panel();
+  c_panel.updatePanel(c_data.lastestData);
 
-    // init the dbSize
-    $('#dbSize')[0].textContent = parseFloat(c_data.dbSize/1024/1024).toFixed(2);
+  // init the graph
+  c_d3Graph = new C_d3Graph();
+  c_d3Graph.initGraph(c_data.data);
 
-    // add event to button
-    c_bt1h = new C_button("1h", c_d3Graph);
-    c_bt12h = new C_button("12h", c_d3Graph);
-    c_bt1d = new C_button("1d", c_d3Graph);
-    c_bt7d = new C_button("7d", c_d3Graph);
-    c_bt1m = new C_button("1m", c_d3Graph);
-    c_bt6m = new C_button("6m", c_d3Graph);
-    c_bt1y = new C_button("1y", c_d3Graph);
+  // init the dbSize
+  $('#dbSize')[0].textContent = parseFloat(c_data.dbSize/1024/1024).toFixed(2);
 
-    // realtime refresh the graph, according to new data
-    width = 0;
-    setInterval(async function(){
-  
-      width += 100 / (dataRefreshTime / barRefreshTime);
-      $('#bar').css('width', width + '%');
+  // finish loading
+  $("#cover-spin").hide();
+  $("#loader").hide();
 
-      if (width >= 100) {
-        width=0;
-        dtRange = localStorage.getItem('dtRange')
-        await c_data.callApi2SelectRawData(dtRange);
+  // add event to button
+  c_bt1h = new C_button("1h", c_d3Graph);
+  c_bt12h = new C_button("12h", c_d3Graph);
+  c_bt1d = new C_button("1d", c_d3Graph);
+  c_bt7d = new C_button("7d", c_d3Graph);
+  c_bt1m = new C_button("1m", c_d3Graph);
+  c_bt6m = new C_button("6m", c_d3Graph);
+  c_bt1y = new C_button("1y", c_d3Graph);
 
-        // refresh the graph
-        c_d3Graph = new C_d3Graph();
-        c_d3Graph.updateData(c_data.data);
-        // refresh the panel
-        c_panel = new C_panel();
-        c_panel.updatePanel(c_data.lastestData);
-        // refresh the dbSize
-        $('#dbSize')[0].textContent = parseFloat(c_data.dbSize/1024/1024).toFixed(2);
-    
-      }
-    }, barRefreshTime); 
+  // realtime refresh the graph, according to new data
+  width = 0;
+  setInterval(async function(){
+
+    width += 100 / (dataRefreshTime / barRefreshTime);
+    $('#bar').css('width', width + '%');
+
+    if (width >= 100) {
+
+      width=0;
+
+      // show loading
+      $("#cover-spin").show(0);
+      $("#loader").show();
+
+      // get data
+      dtRange = localStorage.getItem('dtRange')
+      await c_data.callApi2SelectRawData(dtRange);
+
+      // refresh the graph
+      c_d3Graph = new C_d3Graph();
+      c_d3Graph.updateData(c_data.data);
+      // refresh the panel
+      c_panel = new C_panel();
+      c_panel.updatePanel(c_data.lastestData);
+      // refresh the dbSize
+      $('#dbSize')[0].textContent = parseFloat(c_data.dbSize/1024/1024).toFixed(2);
+
+      // finish loading
+      $("#cover-spin").hide();
+      $("#loader").hide();
+    }
+  }, barRefreshTime); 
     
 })();
