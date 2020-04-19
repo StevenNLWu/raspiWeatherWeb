@@ -64,13 +64,13 @@ class C_data{
     } // end of switch
 
     this.data = rawData.data.map(x => ({device: x._id.device
-                                        , date: new Date(x._id.year,
+                                        , date: new Date(Date.UTC(x._id.year,
                                                     x._id.month,
                                                     x._id.day,
                                                     x._id[hrKeyName] * hrOffset,
                                                     x._id[minKeyName] * minOffset,
                                                     0,
-                                                    0)
+                                                    0))
                                         , temp: x.avgTemp
                                         , hum: x.avgHum
                                         , prs: x.avgPrs
@@ -693,16 +693,16 @@ class C_panel{
 
     // update the panel
     if(offData.length >0){
-      this.officeLastUpd.textContent = (offData[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+      this.officeLastUpd.textContent = (offData[0].date).toLocaleString();
       this.officeTemp.textContent = parseFloat(offData[0].temp).toFixed(1);
       this.officeHum.textContent = parseFloat(offData[0].hum).toFixed(1);
       this.officePrs.textContent = parseFloat(offData[0].prs).toFixed(2);
     }
-    if(offData.length >0){   
-      this.homeLastUpd.textContent = (offData[0].date).toISOString().replace(/T/, ' ').replace(/\..+/, '')
-      this.homeTemp.textContent =  parseFloat(offData[0].temp).toFixed(1);
-      this.homeHum.textContent = parseFloat(offData[0].temp).toFixed(1);
-      this.homePrs.textContent =  parseFloat(offData[0].prs).toFixed(2);
+    if(homeData.length >0){   
+      this.homeLastUpd.textContent = (homeData[0].date).toLocaleString();
+      this.homeTemp.textContent =  parseFloat(homeData[0].temp).toFixed(1);
+      this.homeHum.textContent = parseFloat(homeData[0].temp).toFixed(1);
+      this.homePrs.textContent =  parseFloat(homeData[0].prs).toFixed(2);
 
     }
   }
