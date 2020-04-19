@@ -1,3 +1,9 @@
+# Config
+domainConfig.js
+
+# Cert
+cert
+
 # Logs
 logs
 *.log
