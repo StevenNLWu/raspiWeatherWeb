@@ -338,9 +338,25 @@ class C_d3Graph{
                             .attr("text-anchor", "start")
                             .style("fill", "steelblue")
                             .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo1Name()).lineLable);
-    // Add line No2
-    // (not implement yet)
-    //weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+    // TEMP graph: add line No2
+    this.tempGraphSvg.append("path")
+                    .datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+                    .attr("id", "tempLineNo2")
+                    .attr("fill", "none")
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", d3.line()
+                                  .x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.temp) })
+                        );
+    // TEMP graph: add Line No2 Label
+    d3.select("#tempLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                                      [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].temp) + ")")
+                            .attr("dy", ".35em")
+                            .attr("text-anchor", "start")
+                            .style("fill", "red")
+                            .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo2Name()).lineLable);                
 
     // HUM graph: init the X axis unit, according to the data
     this.humGraphXConfig = d3.scaleTime()
@@ -380,8 +396,25 @@ class C_d3Graph{
                             .attr("text-anchor", "start")
                             .style("fill", "steelblue")
                             .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo1Name()).lineLable);
-    // Add line No2
-    // (not implement yet)
+    // HUM graph: add line No2
+    this.humGraphSvg.append("path")
+                    .datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+                    .attr("id", "humLineNo2")
+                    .attr("fill", "none")
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", d3.line()
+                                  .x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.hum) })
+                          );
+    // HUM graph: add Line No2 Label
+    d3.select("#humLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                                  [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].hum) + ")")
+                            .attr("dy", ".35em")
+                            .attr("text-anchor", "start")
+                            .style("fill", "red")
+                            .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo2Name()).lineLable);
 
     // PRS graph: init the X axis unit, according to the data
     this.prsGraphXConfig = d3.scaleTime()
@@ -422,8 +455,28 @@ class C_d3Graph{
                             .attr("text-anchor", "start")
                             .style("fill", "steelblue")
                             .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo1Name()).lineLable);
-    // Add line No2
-    // (not implement yet)
+    // PRS graph: add line No2
+    x = this.prsGraphXConfig;
+    y = this.prsGraphYConfig;
+    this.prsGraphSvg.append("path")
+                    .datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+                    .attr("id", "prsLineNo2")
+                    .attr("fill", "none")
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", d3.line()
+                                  .x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.prs) })
+                          );
+    // PRS graph: add Line No2 Label
+    d3.select("#prsLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                              [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].prs) + ")")
+                              
+                            .attr("dy", ".35em")
+                            .attr("text-anchor", "start")
+                            .style("fill", "red")
+                            .text(this.dbTag2LineLab.find(x => x.dbTag == C_device.getDeviceNo2Name()).lineLable);
 
   } // end of function of initGraph
 
@@ -445,14 +498,22 @@ class C_d3Graph{
     let x = this.tempGraphXConfig;
     let y = this.tempGraphYConfig;
     let tempLineNo1 = d3.select('#tempLineNo1')
+    let tempLineNo2 = d3.select('#tempLineNo2') 
     tempLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
               .attr("d", d3.line().x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.temp) })
                     );
-    // TEMP graph: relocate the Line No1 Label
+    tempLineNo2.datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.temp) })
+                    );
+    // TEMP graph: relocate the line Label
     d3.select("#tempLine1Lab").attr("transform", "translate(" + (this.width+3) 
                                     + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
                                     [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].temp) + ")")
+    d3.select("#tempLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                                    + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                                    [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].temp) + ")")                                  
 
     // HUM graph: re-draw the domain, according to the new data
     this.humGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
@@ -465,15 +526,24 @@ class C_d3Graph{
     // HUM graph: re-draw the line, according to the new data
     x = this.humGraphXConfig;
     y = this.humGraphYConfig;
-    let humLineNo1 = d3.select('#humLineNo1')
+    let humLineNo1 = d3.select('#humLineNo1');
+    let humLineNo2 = d3.select('#humLineNo2');
     humLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
               .attr("d", d3.line().x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.hum) })
                     );
+    humLineNo2.datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.hum) })
+                    );
+
     // HUM graph: relocate the Line No1 Label
     d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
                                   + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
                                   [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].hum) + ")")
+    d3.select("#humLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                                  [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].hum) + ")")
 
     // PRS graph: re-draw the domain, according to the new data
     this.prsGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
@@ -486,16 +556,24 @@ class C_d3Graph{
     // PRS graph: re-draw the line, according to the new data
     x = this.prsGraphXConfig;
     y = this.prsGraphYConfig;
-    let prsLineNo1 = d3.select('#prsLineNo1')
+    let prsLineNo1 = d3.select('#prsLineNo1');
+    let prsLineNo2 = d3.select('#prsLineNo2');
     prsLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
               .attr("d", d3.line().x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.prs) })
                     );
+    prsLineNo2.datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.prs) })
+                    );
+
     // PRS graph: relocate the Line No1 Label
     d3.select("#prsLine1Lab").attr("transform", "translate(" + (this.width+3) 
                                   + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
                                   [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].prs) + ")")
-
+    d3.select("#prsLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                                  + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                                  [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].prs) + ")")
 
   } // end of function switchGraph
     
@@ -523,15 +601,23 @@ class C_d3Graph{
     // TEMP graph: update the line, according to new data
     let x = this.tempGraphXConfig;
     let y = this.tempGraphYConfig;
-    let tempLineNo1 = d3.select('#tempLineNo1')
+    let tempLineNo1 = d3.select('#tempLineNo1');
+    let tempLineNo2 = d3.select('#tempLineNo2');
     tempLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
               .attr("d", d3.line().x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.temp) })
                     );
-    // TEMP graph: relocate the Line No1 Label
+    tempLineNo2.datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.temp) })
+                    );
+    // TEMP graph: relocate the Label
     d3.select("#tempLine1Lab").attr("transform", "translate(" + (this.width+3) 
                               + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
                               [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].temp) + ")");
+    d3.select("#tempLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                              [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].temp) + ")");
 
     // HUM graph: shift the domain,  according to new data
     this.humGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
@@ -550,15 +636,23 @@ class C_d3Graph{
     // HUM graph: update the line, according to new data
     x = this.humGraphXConfig;
     y = this.humGraphYConfig;
-    let humLineNo1 = d3.select('#humLineNo1')
+    let humLineNo1 = d3.select('#humLineNo1');
+    let humLineNo2 = d3.select('#humLineNo2');
     humLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
               .attr("d", d3.line().x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.hum) })
                     );
-    // HUM graph: relocate the Line No1 Label
+    humLineNo2.datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.hum) })
+                    );                   
+    // HUM graph: relocate the Label
     d3.select("#humLine1Lab").attr("transform", "translate(" + (this.width+3) 
                               + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
                               [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].hum) + ")");
+    d3.select("#humLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                              [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].hum) + ")");                         
 
     // PRS graph: shift the domain,  according to new data
     this.prsGraphXConfig.domain(d3.extent(weatherData, function(d) { return d.date; }))
@@ -578,15 +672,25 @@ class C_d3Graph{
     // PRS graph: update the line, according to new data
     x = this.prsGraphXConfig;
     y = this.prsGraphYConfig;
-    let prsLineNo1 = d3.select('#prsLineNo1')
+    let prsLineNo1 = d3.select('#prsLineNo1');
+    let prsLineNo2 = d3.select('#prsLineNo2');
     prsLineNo1.datum(weatherData.filter(x => x.device == C_device.getDeviceNo1Name()))
               .attr("d", d3.line().x(function(d) { return x(d.date) })
                                   .y(function(d) { return y(d.prs) })
                     );
+    prsLineNo2.datum(weatherData.filter(x => x.device == C_device.getDeviceNo2Name()))
+              .attr("d", d3.line().x(function(d) { return x(d.date) })
+                                  .y(function(d) { return y(d.prs) })
+                    );
+
     // PRS graph: relocate the Line No1 Label
     d3.select("#prsLine1Lab").attr("transform", "translate(" + (this.width+3) 
                               + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo1Name())
                               [weatherData.filter(x => x.device == C_device.getDeviceNo1Name()).length-1].prs) + ")");
+    d3.select("#prsLine2Lab").attr("transform", "translate(" + (this.width+3) 
+                              + "," + y(weatherData.filter(x => x.device == C_device.getDeviceNo2Name())
+                              [weatherData.filter(x => x.device == C_device.getDeviceNo2Name()).length-1].prs) + ")");
+
 
   } // end of function updateData
 
@@ -674,10 +778,10 @@ class C_panel{
     this.officeHum = $('.panelOffice')[2]
     this.officePrs = $('.panelOffice')[3]
 
-    this.homeLastUpd = $('.panelOffice')[0]
-    this.homeTemp = $('.panelOffice')[1]
-    this.homeHum = $('.panelOffice')[2]
-    this.homePrs = $('.panelOffice')[3]
+    this.homeLastUpd = $('.panelHome')[0]
+    this.homeTemp = $('.panelHome')[1]
+    this.homeHum = $('.panelHome')[2]
+    this.homePrs = $('.panelHome')[3]
 
   }
 
@@ -701,7 +805,7 @@ class C_panel{
     if(homeData.length >0){   
       this.homeLastUpd.textContent = (homeData[0].date).toLocaleString();
       this.homeTemp.textContent =  parseFloat(homeData[0].temp).toFixed(1);
-      this.homeHum.textContent = parseFloat(homeData[0].temp).toFixed(1);
+      this.homeHum.textContent = parseFloat(homeData[0].hum).toFixed(1);
       this.homePrs.textContent =  parseFloat(homeData[0].prs).toFixed(2);
 
     }
