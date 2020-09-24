@@ -48,24 +48,18 @@ const httpsServer = https.createServer(httpsOptions, app);
 
 // redirect all http to https
 app.use((req, res, next) => {
-   if(req.protocol === 'http') {
-     res.redirect(301, `https://${req.headers.host}${req.url}`);
-   }
-   next();
+
+  if(req.protocol === 'http') {
+    res.redirect(301, `https://${req.headers.host}${req.url}`);
+  }
+
+  if(req.get('host').indexOf(domainName) == -1){
+    res.end();
+    return;
+  }
+
+  next();
 });
-
-app.get('/', function(request, response){
-
-  console.log(timer.getCurrentLocaltimeInIso()
-              + ": " 
-              + request.ip 
-              +"; "
-              + "Get /"
-              );
-
-  response.render('index');
-  
-})
 
 app.get('/weather', function(request, response){
 
