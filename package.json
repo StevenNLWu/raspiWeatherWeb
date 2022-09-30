@@ -19,7 +19,7 @@
   "homepage": "https://github.com/StevenNLWu/raspiWeatherWeb#readme",
   "dependencies": {
     "bootstrap": "^4.4.1",
-    "d3": "^5.15.0",
+    "d3": "^7.6.1",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "jquery": "^3.5.0"
